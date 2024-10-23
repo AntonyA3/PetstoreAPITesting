@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Web;
 using System.Xml.Linq;
 using static System.Net.WebRequestMethods;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PetstoreAPITesting
 {
@@ -18,117 +21,58 @@ namespace PetstoreAPITesting
             this.client = client;
         }
 
-
-        private JsonElement getJsonElement(string response)
+        async public Task<Dictionary<string, object>[]> findByStatus(string status)
         {
-            JsonElement element;
-            using (JsonDocument document = JsonDocument.Parse(response))
-            {
-                element = document.RootElement.Clone();
-            }
-            return element;
-        }
-
-
-       
-        async public Task<JsonElement> DeletePet(int id) {
-            HttpRequestMessage request = new HttpRequestMessage();
-            request.RequestUri = PetsEndpoint.url;
-            request.Headers.Add("Accept", "application/json");
-            request.Headers.Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE"); request.Method = HttpMethod.Delete;
-
             var content = new StringContent("", Encoding.UTF8, "application/json");
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            query["status"] = status;
+            using HttpResponseMessage response = await this.client.GetAsync(url + "/findByStatus?" + query.ToString());
+            return JsonConvert.DeserializeObject<Dictionary<string, object>[]>(await response.Content.ReadAsStringAsync());
+        }
+
+
+        async public Task<Dictionary<string, object>> findByTags()
+        {
+            //TODO
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+            using HttpResponseMessage response = await this.client.DeleteAsync(url + "/findByTags");
+
+            return JsonConvert.DeserializeObject<Dictionary<string, object>>(await response.Content.ReadAsStringAsync());
+        }
+
+
+        async public Task<Dictionary<string, object>> uploadImage(int id)
+        {
+            //TODO
+            using HttpResponseMessage response = await this.client.DeleteAsync(url + "/" + id + "/uploadImage");
+            return JsonConvert.DeserializeObject<Dictionary<string, object>>(await response.Content.ReadAsStringAsync());
+        }
+
+
+        async public Task<Dictionary<string, object>> deletePet(int id) {
             using HttpResponseMessage response = await this.client.DeleteAsync(url + "/" + id);
-            return getJsonElement(await response.Content.ReadAsStringAsync());
+            
+            return JsonConvert.DeserializeObject<Dictionary<string, object>>(await response.Content.ReadAsStringAsync());
         }
 
-        async public Task<JsonElement> getPet(int id)
+        async public Task<Dictionary<string, object>> getPet(int id)
         {
-            var request = new HttpRequestMessage();
-            request.RequestUri = new Uri(url);
-            request.Headers.Add("Accept", "application/json");
-            request.Headers.Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-            request.Method = HttpMethod.Get;
             using HttpResponseMessage response = await this.client.GetAsync(url + "/" + id);
-            return getJsonElement(await response.Content.ReadAsStringAsync());
-
+            return JsonConvert.DeserializeObject<Dictionary<string, object>>(await response.Content.ReadAsStringAsync());
         }
 
-        async public Task<JsonElement> addAnyPetOfId(int id)
+        async public Task<Dictionary<string, object>> addPet(PetData data)
         {
-            return await addPetUncheckedId(id.ToString());
-           
+            var content = new StringContent(data.AsJSON(), Encoding.UTF8, "application/json");
+            using HttpResponseMessage response = await client.PostAsync("https://petstore.swagger.io/v2/pet", content);
+            return JsonConvert.DeserializeObject<Dictionary<string, object>>(await response.Content.ReadAsStringAsync());
         }
 
-        async public Task<JsonElement> addPetUncheckedId(string id){
-            var request = new HttpRequestMessage();
-            request.RequestUri = new Uri("https://petstore.swagger.io/v2/pet");
-            request.Method = HttpMethod.Post;
-            request.Headers.Add("Accept", "application/json");
-            request.Headers.Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-            var content = new StringContent(
-            @"{
-              ""id"":" + id + @",
-              ""name"": ""Baz"",
-              ""category"": {
-                ""id"": 0,
-                ""name"": ""Dogs""
-              },
-              ""photoUrls"": [
-                ""string""
-              ],
-              ""tags"": [
-                {
-                  ""id"": 0,
-                  ""name"": ""string""
-                }
-              ],
-              ""status"": ""available""
-            }"""
-                , Encoding.UTF8, "application/json");
-
-            using HttpResponseMessage response = await client.PutAsync("https://petstore.swagger.io/v2/pet", content);
-            return getJsonElement(await response.Content.ReadAsStringAsync());
-        }
-
-        async public Task<JsonElement> putAnyPetOfId(int id)
+        async public Task<Dictionary<string, object>> putPet(PetData data)
         {
-            var request = new HttpRequestMessage();
-            request.RequestUri = new Uri("https://petstore.swagger.io/v2/pet");
-            request.Method = HttpMethod.Put;
-            request.Headers.Add("Accept", "application/json");
-            request.Headers.Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-            var content = new StringContent(
-            @"{
-              ""id"":" + id + @",
-              ""name"": ""Baz"",
-              ""category"": {
-                ""id"": 0,
-                ""name"": ""Dogs""
-              },
-              ""photoUrls"": [
-                ""string""
-              ],
-              ""tags"": [
-                {
-                  ""id"": 0,
-                  ""name"": ""string""
-                }
-              ],
-              ""status"": ""available""
-            }"""
-                , Encoding.UTF8, "application/json");
-
-
-            using HttpResponseMessage response = await client.PutAsync("https://petstore.swagger.io/v2/pet", content);
-            return getJsonElement(await response.Content.ReadAsStringAsync());
-
-
+            var content = new StringContent(data.AsJSON(), Encoding.UTF8, "application/json");
+            using HttpResponseMessage response = await client.PostAsync("https://petstore.swagger.io/v2/pet", content);
+            return JsonConvert.DeserializeObject<Dictionary<string, object>>(await response.Content.ReadAsStringAsync());
         }
-
-        //async public Task<string> modifyPet()
-        //{
-
-        //}
     }
 }
