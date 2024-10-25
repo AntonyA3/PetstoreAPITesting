@@ -1,19 +1,11 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+
 
 namespace PetstoreAPITesting
 {
-    internal class PetData
+    public class PetData
     {
-        public Dictionary<string, object> data;
-
-
+        private Dictionary<string, object> data;
 
         public PetData()
         {
@@ -30,6 +22,7 @@ namespace PetstoreAPITesting
             tag.Add("name", "string");
             tags.Add(tag);
             this.data.Add("tags", tags);
+            this.data.Add("photoUrls", new object[0]);
             this.data.Add("status", "available");
         }
 
@@ -39,10 +32,81 @@ namespace PetstoreAPITesting
             return this;
         }
 
+        public PetData SetTags(string tags) {
+            string[] tagarray = tags.Split(',');
+            var newtaglist = new List<object>();
+            int identifier = 0;
+            foreach (var tag in tagarray)
+            {
+                newtaglist.Add(new{
+                     id = identifier,
+                     name = tag
+                });
+                identifier++;
+            }
+            this.data["tags"] = newtaglist;
+            return this;
+        }
+
+        public object GetName()
+        {
+            return this.data["name"];
+        }
+
+        public object GetCategory()
+        {
+            return this.data["category"];
+        }
+
+
+        public int GetID()
+        {
+            return (int)this.data["id"];
+        }
+
+
+
         public PetData SetID(object id)
         {
             this.data["id"] = id;
             return this;
+        }
+
+        public PetData SetPhotoUrls(object photoUrl)
+        {
+            this.data["photoUrls"] = photoUrl;
+            return this;
+        }
+
+        public object GetStatus()
+        {
+            return this.data["status"];
+        }
+
+        public object GetPhotoUrls()
+        {
+            return this.data["photoUrls"];
+        }
+
+        public object GetTags()
+        {
+            return this.data["tags"];
+        }
+
+        public PetData SetCategory(object category)
+        {
+            this.data["category"] = category;
+            return this;
+        }
+
+        public PetData SetName(object name) {
+            this.data["name"] = name;
+            return this;
+        }
+
+        public PetData SetStatus(string status) { 
+            this.data["status"] = status; 
+            return this; 
         }
 
         public string AsJSON()

@@ -1,11 +1,5 @@
 ﻿using Newtonsoft.Json;
 using PetstoreAPITesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 
 class OtherProgram
 {
@@ -14,10 +8,18 @@ class OtherProgram
     {
         var client = new HttpClient();
         var pets = new PetsEndpoint(client);
-        var response = await pets.findByStatus("");
-        Console.WriteLine(response.Count());
-        
-        Console.WriteLine(JsonConvert.SerializeObject(response));
+        var filePath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/images/dog.jpg";
+        await pets.deletePet(11);
+        PetData data = new PetData().SetID(11);
+        await pets.addPet(data);
+        Console.WriteLine(JsonConvert.SerializeObject(await pets.getPet(11)));
+        Console.WriteLine(" ");
+
+        await pets.addPet(data);
+        Console.WriteLine(JsonConvert.SerializeObject(await pets.uploadImage(11, filePath)));
+
+        Console.WriteLine("uploaded image");
+        Console.WriteLine(JsonConvert.SerializeObject(await pets.getPet(11)));
 
         //var query = HttpUtility.ParseQueryString(string.Empty);
         //query["foo"] = "bar";
