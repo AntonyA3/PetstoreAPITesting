@@ -10,16 +10,16 @@ class OtherProgram
         var pets = new PetsEndpoint(client);
         var filePath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "/images/dog.jpg";
         await pets.deletePet(11);
-        PetData data = new PetData().SetID(11);
-        await pets.addPet(data);
-        Console.WriteLine(JsonConvert.SerializeObject(await pets.getPet(11)));
-        Console.WriteLine(" ");
+        //PetData data = new PetData().SetID(11);
+        //await pets.postPet(data.AsJSON());
+        //Console.WriteLine(JsonConvert.SerializeObject(await pets.getPet(11)));
+        //Console.WriteLine(" ");
 
-        await pets.addPet(data);
-        Console.WriteLine(JsonConvert.SerializeObject(await pets.uploadImage(11, filePath)));
+        //await pets.postPet(data.AsJSON());
+        //Console.WriteLine(JsonConvert.SerializeObject(await pets.uploadImage(11, filePath)));
 
-        Console.WriteLine("uploaded image");
-        Console.WriteLine(JsonConvert.SerializeObject(await pets.getPet(11)));
+        //Console.WriteLine("uploaded image");
+        //Console.WriteLine(JsonConvert.SerializeObject(await pets.getPet(11)));
 
         //var query = HttpUtility.ParseQueryString(string.Empty);
         //query["foo"] = "bar";

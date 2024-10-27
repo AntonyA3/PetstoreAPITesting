@@ -4,7 +4,7 @@
 
 namespace PetstoreAPITesting
 {
-    internal class CategoryData
+    public class CategoryData
     {
         private object id;
         private object name;
@@ -24,7 +24,17 @@ namespace PetstoreAPITesting
             this.name = name;
             return this;
         }
-       
+
+
+        public object GetID()
+        {
+            return this.id;
+        }
+
+        public object GetName()
+        {
+            return this.name;
+        }
 
         public string AsJSON()
         {

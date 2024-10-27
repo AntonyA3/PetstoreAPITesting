@@ -16,7 +16,11 @@ namespace PetstoreAPITesting
             this.value = value;
         }
 
-        public string Casename { get; set; }
-        public PetData Value { get; set; }
+        public string GetCasename() {
+            return this.casename;
+        }
+        public PetData GetValue() { 
+            return value;
+        }
     }
 }
