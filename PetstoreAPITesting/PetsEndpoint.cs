@@ -1,12 +1,13 @@
-﻿using Newtonsoft.Json;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Web;
-
 
 namespace PetstoreAPITesting
 {
+    /// <summary>
+    /// These are some of the helper functions assertions and events
+    /// that will occur as part of Creating Reading Updating and Deleting data 
+    /// within the petstore API for the pets endpout
+    /// </summary>
     public class PetsEndpoint
     {
 
@@ -133,8 +134,8 @@ namespace PetstoreAPITesting
         /// <summary>
         /// Makes a get request to find pets with a particular status
         /// </summary>
-        /// <param name="status"></param>
-        /// <returns></returns>
+        /// <param name="status">the query string arguments for the status</param>
+        /// <returns>the http response as a Json Element</returns>
         async public Task<JsonElement> findByStatus(object status)
         {       
             using HttpResponseMessage response = await this.client.GetAsync(url + "/findByStatus?status=" + status);
@@ -149,8 +150,8 @@ namespace PetstoreAPITesting
         /// <summary>
         /// Makes a get request ro find pets with particular tags
         /// </summary>
-        /// <param name="tags"></param>
-        /// <returns></returns>
+        /// <param name="tags">The query string to used to find tags</param>
+        /// <returns>the http response as a Json element</returns>
         async public Task<JsonElement> findByTags(object tags)
         {
             var content = new StringContent("", Encoding.UTF8, "application/json");
@@ -163,11 +164,11 @@ namespace PetstoreAPITesting
         }
 
         /// <summary>
-        /// Makes a pos request to upload an image
+        /// Makes a POST request to upload an image
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
+        /// <param name="id">The id of the pet to upload the image to the pet</param>
+        /// <param name="filePath">The file path of the image to be uploaded</param>
+        /// <returns>A http response as a Json Element</returns>
         async public Task<JsonElement> uploadImage(object id, string filePath)
         {            
             using (var content = new MultipartFormDataContent())
@@ -187,8 +188,8 @@ namespace PetstoreAPITesting
         /// <summary>
         /// Deletes a pet from the API with a delete request
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">The Id of the pet to delete</param>
+        /// <returns>A http response as a Json Element</returns>
         async public Task<JsonElement> deletePet(object id) {
             using (HttpResponseMessage response = await this.client.DeleteAsync(url + "/" + id))
             {
@@ -209,7 +210,7 @@ namespace PetstoreAPITesting
         /// Gets a pet from the API with a get request
         /// </summary>
         /// <param name="id">This should be an integer for a successful response</param>
-        /// <returns></returns>
+        /// <returns>The Http Response as a Json Element</returns>
         async public Task<JsonElement> getPet(object id)
         {
             using HttpResponseMessage response = await this.client.GetAsync(url + "/" + id);
@@ -224,8 +225,8 @@ namespace PetstoreAPITesting
         /// <summary>
         /// Adds a pet by sending a POST request
         /// </summary>
-        /// <param name="data"> </param>
-        /// <returns></returns>
+        /// <param name="data">The pet data in json format that will be the request content</param>
+        /// <returns>The Http response as a Json Element</returns>
         async public Task<JsonElement> postPet(JsonElement data)
         {
             var content = new StringContent(data.GetRawText(), Encoding.UTF8, "application/json");
@@ -241,8 +242,8 @@ namespace PetstoreAPITesting
         /// <summary>
         /// Updates a pet by sending a PUT request
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        /// <param name="data">The pet data in json format that will be the request content</param>
+        /// <returns>The Http response as a Json Element</returns>
         async public Task<JsonElement> putPet(JsonElement data)
         {
             var content = new StringContent(data.GetRawText(), Encoding.UTF8, "application/json");

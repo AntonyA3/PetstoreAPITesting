@@ -1,8 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text.Json;
-using System.Text.Json.Nodes;
+﻿using System.Text.Json;
 
 
 namespace PetstoreAPITesting
@@ -10,6 +6,11 @@ namespace PetstoreAPITesting
     public class PetData
     {
         new Dictionary<string, object> data;
+
+        /// <summary>
+        /// Initialised the pet with defaul valid data for 
+        /// POST or put operations
+        /// </summary>
         public PetData()
         {
             this.data = new Dictionary<string, object>();
@@ -29,59 +30,98 @@ namespace PetstoreAPITesting
             this.data.Add("status", "available");
         }
 
-        public PetData SetValidID(long id)
-        {
-            this.data["id"] = id;
-                //JsonDocument.Parse(id.ToString()).RootElement.Clone();
-            return this;
-        }
-
-
-
+        /// <summary>
+        /// This gets the status of the pet
+        /// the function should only be used when verifying that
+        /// the properties of a status is correct when the http response
+        /// is a valid pet
+        /// </summary>
+        /// <returns>a string that is the pet status</returns>
         public string GetStatus()
         {
-
             return (string)this.data["status"];
-            //.GetString();
-
         }
+
+
+        /// <summary>
+        /// This gets the category id of the pet
+        /// the function should only be used when verifying that
+        /// the properties of a category is correct when the http response
+        /// is a valid pet
+        /// </summary>
+        /// <returns>A valid category Id</returns>
 
         public long GetCategoryId()
         {
             return (long)((Dictionary<string, object>)data["category"])["id"];
-                //).GetInt64();
         }
 
+        /// <summary>
+        /// This gets the category name of the pet
+        /// the function should only be used when verifying that
+        /// the properties of a category is correct when the http response
+        /// is a valid pet
+        /// </summary>
+        ///<returns>A valid category name</returns>
         public string GetCategoryName()
         {
             return (string)((Dictionary<string, object>)data["category"])["name"];
-
-            //return this.data["category"].GetProperty("name").GetString();
         }
 
+        /// <summary>
+        /// This gets the name of the pet
+        /// the function should only be used when verifying that
+        /// the properties of a pet name is correct when the http response
+        /// is a valid pet
+        /// </summary>
+        /// <returns>A valid pet name</returns>
         public string GetName()
         {
-            return (string)this.data["name"];//.GetString();
-
+            return (string)this.data["name"];
         }
 
-        public object GetID()
+
+        /// <summary>
+        /// This gets the name of the pet
+        /// the function should only be used when verifying that
+        /// the properties of a pet id is correct when the http response
+        /// is a valid pet
+        /// </summary>
+        /// <returns>The pet ID as a long integer</returns>
+        public long GetID()
         {
-            return this.data["id"];//.GetInt64();
+            return (long)this.data["id"];
         }
 
+        /// <summary>
+        /// This sets the id to either a valid or an invalid ID
+        /// </summary>
+        /// <param name="id">a valid id as a long positive integer 
+        /// or an invalid Id of another data type</param>
+        /// <returns>An instance of the class PetData for chaining using builder pattern</returns>
         public PetData SetID(object id)
         {
             this.data["id"] = id;
             return this;
         }
 
+        /// <summary>
+        /// This returns a valid photoUrl that is used when
+        /// asserting whether the photoUrl matches a specific value</summary>
+        /// <param name="photoUrl"></param>
+        /// <returns></returns>
         public PetData AddPhotoUrl(object photoUrl)
         {
-            ((List<object>)this.data["photoUrls"]).Add(photoUrl); //JsonDocument.Parse(photoUrl.ToString()).RootElement.Clone();
+            ((List<object>)this.data["photoUrls"]).Add(photoUrl);
             return this;
         }
 
+        /// <summary>
+        /// This returns a valid tag ID that is used when
+        /// asserting whether the tagID matches a specific value
+        /// </summary>
+        /// <param name="index">the index to find the tag in the list of tags</param>
+        /// <returns>the tag ID at the specified indes</returns>
         public long GetTagID(int index)
         {
             List<object> tags = (List<object>)this.data["tags"];
@@ -90,6 +130,11 @@ namespace PetstoreAPITesting
             return id;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         public string GetTagName(int index)
         {
             List<object> tags = (List<object>)this.data["tags"];
@@ -98,6 +143,16 @@ namespace PetstoreAPITesting
             return id;
         }
 
+
+        /// <summary>
+        /// This gets the photurl at a particular index of the pet
+        /// the function should only be used when verifying that
+        /// the properties of a pets photoUrls are correct when the http response
+        /// is a valid pet
+        /// </summary>
+        /// <returns>as string that is the photoURL at a particular index</returns>
+        /// <param name="index">the index to get the photoUrl</param>
+        /// <returns>A photourl string at a given index</returns>
         public string GetPhotoUrl(int index)
         {
             List<object> photoUrls = (List<object>)this.data["photoUrls"];
@@ -105,43 +160,75 @@ namespace PetstoreAPITesting
         }
 
 
-
+        /// <summary>
+        /// This sets the category id of a pet regardless of whether the
+        /// category ID is valid
+        /// </summary>
+        /// <param name="categoryId">a valid positive integer or an invalid datatype as an ID</param>
+        /// <returns>the current instance of PetData for chaining with builder pattern</returns>
         public PetData SetCategoryID(object categoryId)
         {
-            ((Dictionary<string, object>)this.data["category"])["id"] = categoryId; //JsonDocument.Parse(category.ToString()).RootElement.Clone();
+            ((Dictionary<string, object>)this.data["category"])["id"] = categoryId;
             return this;
         }
 
+        /// <summary>
+        /// This sets the category name of a pet regardless of whether
+        /// it would be valid or invalid when sent as a http request
+        /// </summary>
+        /// <param name="categoryName"></param>
+        /// <returns>the current instance of PetData for chaining with builder pattern</returns>
         public PetData SetCategoryName(object categoryName)
         {
-            ((Dictionary<string, object>)this.data["category"])["name"] = categoryName; //JsonDocument.Parse(category.ToString()).RootElement.Clone();
+            ((Dictionary<string, object>)this.data["category"])["name"] = categoryName;
             return this;
         }
 
+
+        /// <summary>
+        /// This sets tha name of pet data regardless of whether the
+        /// this can be used in an non failing request
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>the current instance of PetData for chaining with builder pattern</returns>
         public PetData SetName(object name)
         {
-            this.data["name"] = name; //JsonDocument.Parse(name.ToString()).RootElement.Clone();
+            this.data["name"] = name;
             return this;
         }
 
+
+        /// <summary>
+        /// This sets the status of a pet regardless of whether the 
+        /// status would be valid or invalid when making a http request
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns>the current instance of PetData for chaining with builder pattern</returns>
         public PetData SetStatus(string status)
         {
-            this.data["status"] = status; // JsonDocument.Parse(status.ToString()).RootElement.Clone();
+            this.data["status"] = status; 
             return this;
         }
 
 
+        /// <summary>
+        /// Gets the Pet Data as a JsonString
+        /// </summary>
+        /// <returns>The json string representing this instande of a pet</returns>
         public string AsJSONString()
         {
-            return System.Text.Json.JsonSerializer.Serialize(this.data);
+            return JsonSerializer.Serialize(this.data);
 
         }
 
-
+        /// <summary>
+        /// Gets the PetData as a JSon element
+        /// </summary>
+        /// <returns>A Json element representing thsi instant of a pet</returns>
         public JsonElement AsJSON()
         {
-    
-            string jsonString = System.Text.Json.JsonSerializer.Serialize(this.data);
+
+            string jsonString = this.AsJSONString();
             using (JsonDocument document = JsonDocument.Parse(jsonString))
             {
                 JsonElement root = document.RootElement;

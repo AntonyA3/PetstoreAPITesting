@@ -1,11 +1,19 @@
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
 namespace PetstoreAPITesting
 {
+    /// <summary>
+    /// This tests the Pets endpoint for the Petstore API
+    /// Ideally these tests could be converted to the Gherkin format
+    /// As a way to structure the tests in a better format.
+    ///
+    /// I designed the scenarios around a potential user making use of the API
+    /// The scenarios make sure that the user receives the correct error responses
+    /// when interacting with the API incorrectly an that the user receives an
+    /// accurate response when interacting with thw API correctly
+    /// </summary>
     [TestFixture]
     public class PetsEndpointTest 
     {
-        private static PetTestData[] GivenAPetWasAdded_whenIPostADuplicatePet_cases =
+        private static PetTestData[] AUserPostsAPetWithTheSameID_cases =
         {
             new PetTestData("Default Pet",new PetData())
         };
@@ -14,11 +22,11 @@ namespace PetstoreAPITesting
         {
             new object[]{
                 new PetTestData("Default Valid Pet", new PetData()),
-                new PetTestData("Other Pet", new PetData().SetValidID(21))
+                new PetTestData("Other Pet", new PetData().SetID(21))
             }
         };
 
-        private static object[] GivenAPetWasAdded_WhenIUpdateAnExistingPetCases =
+        private static object[] AUserUpdatesAPetThatAlreadyExists_cases =
         {
             new object[]{
                 new PetTestData("Default Pet", new PetData()),
@@ -26,7 +34,7 @@ namespace PetstoreAPITesting
             }
         };
 
-        private static object[] GivenAPetWasAdded_whenIPostAnInvalidPet_cases =
+        private static object[] AUserPostsAnotherPetButWithInvalidProperties_cases =
         {
             new object[]{
                 new PetTestData("Default Valid Pet", new PetData()),
@@ -50,7 +58,7 @@ namespace PetstoreAPITesting
             }
         };
 
-        private static readonly PetTestData[] GivenAPetWasDeleted_WhenIPostAValidPet_cases =
+        private static readonly PetTestData[] AUserPostsAPetWithCorrectDataProvided_cases =
         [
         new PetTestData(
             "Default Valid Pet",
@@ -59,7 +67,6 @@ namespace PetstoreAPITesting
         new PetTestData(
             "Valid Category {id = 1, name = \"Good\"}",
             new PetData().SetCategoryID(1l).SetCategoryName("Good")
-            //(new CategoryData().SetID(1).SetName("Good"))
         ),
         new PetTestData(
             "Category Name",
@@ -100,7 +107,7 @@ namespace PetstoreAPITesting
 
         ];
 
-        private static readonly PetTestData[] GivenAPetWasDeleted_WhenIPostAnInvalidPet_cases = [
+        private static readonly PetTestData[] AUserPostsAPetWithSomeInvalidDataProvided_cases = [
     new PetTestData(
             "Pet With A string of a number as an ID",
             new PetData().SetID("212")
@@ -171,23 +178,23 @@ namespace PetstoreAPITesting
         )
 ];
         
-        private static readonly PetTestData[] GivenAPetWasDeleted_WhenIPutANonExistentPet_cases = [
+        private static readonly PetTestData[] AUserUpdatesAPetThatDoesNotExist_cases = [
             new PetTestData("Default Valid Pet",new PetData().SetID(212))
         ];
         
-        private static readonly long[] GivenAPetWasDeleted_WhenIGetANonExistentPet_cases = [
+        private static readonly long[] AUserAttemptsToGetAPetThatDoesNotExist_cases = [
             212
         ];
         
-        private static readonly long[] GivenAPetWasDeleted_WhenIDeleteANonExistentPet_cases = [
+        private static readonly long[] AUserAttemptsToDeleteAPetButProvidesIDOfNonExistentPet_cases = [
             212
         ];
         
-        private static readonly PetTestData[] GivenAPetWasDeleted_WhenIPutAnInvalidPet_cases = [
+        private static readonly PetTestData[] AUserUpdatesAPetWithSomeInvalidData_cases = [
             new PetTestData("A non existing and invalid pet",new PetData().SetID("Hello"))
         ];
         
-        private static readonly object[] GivenAPetWasDeleted_WhenIGetAnInvalidPet_cases = [
+        private static readonly object[] AUserAttemptsToGetAPetButProvidesAnInvalidID_cases = [
             "hello"
         ];
         
@@ -195,7 +202,7 @@ namespace PetstoreAPITesting
             "hello"
         ];
         
-        private static readonly object[] GivenAPetWasDeleted_WhenIDeleteAnInvalidPet_cases = [
+        private static readonly object[] AUserAttemptsToDeleteAPetButProvidesAnInvalidID_cases = [
             "hello"
         ];
 
@@ -247,8 +254,8 @@ namespace PetstoreAPITesting
         }
 
         [Test]
-        [TestCaseSource(nameof(GivenAPetWasAdded_whenIPostADuplicatePet_cases))]
-        public async Task GivenAPetWasAdded_WhenIPostADuplicatePet(PetTestData pet)
+        [TestCaseSource(nameof(AUserPostsAPetWithTheSameID_cases))]
+        public async Task AUserPostsAPetWithTheSameID(PetTestData pet)
         {
             await GivenAPetWasAdded(pet);
             var response = await pets.When_I_Create_A_Pet(pet);
@@ -256,8 +263,8 @@ namespace PetstoreAPITesting
         }
 
         [Test]
-        [TestCaseSource(nameof(GivenAPetWasAdded_whenIPostAnInvalidPet_cases))]
-        public async Task GivenAPetWasAdded_WhenIPostAnInvalidPet(PetTestData pet, PetTestData invalidPet)
+        [TestCaseSource(nameof(AUserPostsAnotherPetButWithInvalidProperties_cases))]
+        public async Task AUserPostsAnotherPetButWithInvalidProperties(PetTestData pet, PetTestData invalidPet)
         {
             await GivenAPetWasAdded(pet);
             var response = await pets.When_I_Create_A_Pet(invalidPet);
@@ -265,8 +272,8 @@ namespace PetstoreAPITesting
         }
 
         [Test]
-        [TestCaseSource(nameof(GivenAPetWasAdded_WhenIUpdateAnExistingPetCases))]
-        public async Task GivenAPetWasAdded_WhenIUpdateAnExistingPet(PetTestData pet, PetTestData updated_pet)
+        [TestCaseSource(nameof(AUserUpdatesAPetThatAlreadyExists_cases))]
+        public async Task AUserUpdatesAPetThatAlreadyExists(PetTestData pet, PetTestData updated_pet)
         {
             await GivenAPetWasAdded(pet);
             var response = await pets.When_I_Update_A_pet(updated_pet);
@@ -275,7 +282,7 @@ namespace PetstoreAPITesting
 
 
         [Test]
-        public async Task GivenAPetWasAdded_WhenIGetAnExistingPet()
+        public async Task AUserGetsAPetThatAlreadyExists()
         {
             var petdata = new PetTestData("Default Valid Pet", new PetData());
             await GivenAPetWasAdded(petdata);
@@ -285,7 +292,7 @@ namespace PetstoreAPITesting
 
 
         [Test]
-        public async Task GivenAPetWasAdded_WhenIDeleteAnExistingPet()
+        public async Task AUserDeletesAPetThatAlreadyExists()
         {
             var petdata = new PetData();
             await GivenAPetWasAdded(new PetTestData("Default Valid Pet", petdata));
@@ -295,7 +302,7 @@ namespace PetstoreAPITesting
 
 
         [Test]
-        public async Task GivenAPetWasAdded_WhenIUploadAValidPetImage()
+        public async Task AUserUploadesAnImageToAPetThatAlreadyExists()
         {
             PetTestData valid_case = new PetTestData("Pet exists", new PetData());
             await GivenAPetWasAdded(valid_case);
@@ -305,7 +312,7 @@ namespace PetstoreAPITesting
 
 
         [Test]
-        public async Task GivenAPetWasAdded_WhenIUploadAnInvalidPetImage()
+        public async Task AUserUploadsAnImageToAPetButProvidesAnInvalidImage()
         {
             PetTestData valid_case = new PetTestData("Pet exists", new PetData());
             await GivenAPetWasAdded(valid_case);
@@ -319,8 +326,7 @@ namespace PetstoreAPITesting
         [TestCase("pending")]
         [TestCase("sold")]
         [TestCase("sold,pending")]
-
-        public async Task GivenAPetWasAdded_WhenIFindPetsByStatus(string status)
+        public async Task AUserFindsAPetBasesOffOneOrMoreValidStatus(string status)
         {
             PetTestData valid_case = new PetTestData("Pet exists", new PetData().SetStatus(status));
             await GivenAPetWasAdded(valid_case);
@@ -331,7 +337,7 @@ namespace PetstoreAPITesting
         [Test]
         [TestCase("lol")]
         [TestCase(1)]
-        public async Task GivenAPetWasAdded_WhenIFindPetsByAnInvalidStatus(object status)
+        public async Task AUserTriesToFindAPetBasedOnOneInvalidStatus(object status)
         {
             var response = await pets.findByStatus(status);
             pets.Expect_Empty_List_Of_Pets(response);
@@ -339,7 +345,7 @@ namespace PetstoreAPITesting
 
         [Test]
         [TestCase("string")]
-        public async Task GivenAPetWasAdded_WhenIFindPetsByAValidTag(string tags)
+        public async Task AUserFindsPetsBasedOnAValidTag(string tags)
         {
             var response = await pets.findByTags(tags);
             pets.Expect_Non_Empty_List_of_Pets(response);
@@ -349,16 +355,15 @@ namespace PetstoreAPITesting
         [TestCase("@@@")]
         [TestCase(1)]
 
-        public async Task GivenAPetWasAdded_WhenIFindPetsByAnInvalidTag(object tag)
+        public async Task AUserTriesToFindPetsBasedOnAnInvalidTag(object tag)
         {
             var response = await pets.findByTags(tag);
             pets.Expect_Empty_List_Of_Pets(response);
         }
 
         [Test]
-        [Category("TestPOSTRequest")]
-        [TestCaseSource(nameof(GivenAPetWasDeleted_WhenIPostAValidPet_cases))]
-        public async Task GivenAPetWasDeleted_WhenIPostAValidPet(PetTestData data)
+        [TestCaseSource(nameof(AUserPostsAPetWithCorrectDataProvided_cases))]
+        public async Task AUserPostsAPetWithCorrectDataProvided(PetTestData data)
         {
             await GivenAPetWasDeleted(data.GetCasename(), data.GetValue().GetID());
             var response = await pets.When_I_Create_A_Pet(data);
@@ -367,9 +372,8 @@ namespace PetstoreAPITesting
         }
 
         [Test]
-        [TestCaseSource(nameof(GivenAPetWasDeleted_WhenIPostAnInvalidPet_cases))]
-        [Category("TestPOSTRequest")]
-        public async Task GivenAPetWasDeleted_WhenIPostAnInvalidPet(PetTestData data)
+        [TestCaseSource(nameof(AUserPostsAPetWithSomeInvalidDataProvided_cases))]
+        public async Task AUserPostsAPetWithSomeInvalidDataProvided(PetTestData data)
         {
             await GivenAPetWasDeleted(data.GetCasename(), data.GetValue().GetID());
             var response = await pets.When_I_Create_A_Pet(data);
@@ -377,17 +381,17 @@ namespace PetstoreAPITesting
         }
 
         [Test]
-        [TestCaseSource(nameof(GivenAPetWasDeleted_WhenIPutANonExistentPet_cases))]
-        public async Task GivenAPetWasDeleted_WhenIPutANonExistentPet(PetTestData data)
+        [TestCaseSource(nameof(AUserUpdatesAPetThatDoesNotExist_cases))]
+        public async Task AUserUpdatesAPetThatDoesNotExist(PetTestData data)
         {
             await GivenAPetWasDeleted(data.GetCasename(), data.GetValue().GetID());
             var response = await pets.When_I_Update_A_pet(new PetTestData("A non existing pet", data.GetValue()));
             pets.Expect_invalid_pet_error_message(response);
         }
 
-        [TestCaseSource(nameof(GivenAPetWasDeleted_WhenIPutAnInvalidPet_cases))]
+        [TestCaseSource(nameof(AUserUpdatesAPetWithSomeInvalidData_cases))]
         [Test]
-        public async Task GivenAPetWasDeleted_WhenIPutAnInvalidPet(PetTestData data)
+        public async Task AUserUpdatesAPetWithSomeInvalidData(PetTestData data)
         {
             await GivenAPetWasDeleted(data.GetCasename(),  data.GetValue().GetID());
             var response = await pets.When_I_Update_A_pet(data);
@@ -395,8 +399,8 @@ namespace PetstoreAPITesting
         }
 
         [Test]
-        [TestCaseSource(nameof(GivenAPetWasDeleted_WhenIGetANonExistentPet_cases))]
-        public async Task GivenAPetWasDeleted_WhenIGetANonExistentPet(long id)
+        [TestCaseSource(nameof(AUserAttemptsToGetAPetThatDoesNotExist_cases))]
+        public async Task AUserAttemptsToGetAPetThatDoesNotExist(long id)
         {
             await GivenAPetWasDeleted("pet with id" + id, id);
             var response = await pets.When_I_Get_A_Pet(id);
@@ -404,8 +408,8 @@ namespace PetstoreAPITesting
         }
 
         [Test]
-        [TestCaseSource(nameof(GivenAPetWasDeleted_WhenIGetAnInvalidPet_cases))]
-        public async Task GivenAPetWasDeleted_WhenIGetAnInvalidPet(object id)
+        [TestCaseSource(nameof(AUserAttemptsToGetAPetButProvidesAnInvalidID_cases))]
+        public async Task AUserAttemptsToGetAPetButProvidesAnInvalidID(object id)
         {
             await GivenAPetWasDeleted("pet with id" + id, id);
             var response = await pets.When_I_Get_A_Pet(id);
@@ -413,8 +417,8 @@ namespace PetstoreAPITesting
         }
 
         [Test]
-        [TestCaseSource(nameof(GivenAPetWasDeleted_WhenIDeleteANonExistentPet_cases))]
-        public async Task GivenAPetWasDeleted_WhenIDeleteANonExistentPet(long id)
+        [TestCaseSource(nameof(AUserAttemptsToDeleteAPetButProvidesIDOfNonExistentPet_cases))]
+        public async Task AUserAttemptsToDeleteAPetButProvidesIDOfNonExistentPet(long id)
         {
             await GivenAPetWasDeleted("pet with id " + id, id);
             var response = await pets.When_I_Delete_A_Pet(id);
@@ -422,8 +426,8 @@ namespace PetstoreAPITesting
         }
 
         [Test]
-        [TestCaseSource(nameof(GivenAPetWasDeleted_WhenIDeleteAnInvalidPet_cases))]
-        public async Task GivenAPetWasDeleted_WhenIDeleteAnInvalidPet(object id)
+        [TestCaseSource(nameof(AUserAttemptsToDeleteAPetButProvidesAnInvalidID_cases))]
+        public async Task AUserAttemptsToDeleteAPetButProvidesAnInvalidID(object id)
         {
             await GivenAPetWasDeleted("pet with invalid id" + id, id);
             var response = await pets.When_I_Delete_A_Pet(id);
@@ -432,7 +436,7 @@ namespace PetstoreAPITesting
 
 
         [Test]
-        public async Task GivenAPetWasUpdated_WhenAPetAlreadyExists()
+        public async Task AUserUpdatesAPetThatAlreadyExists()
         {
             PetTestData petdata = new PetTestData("Existing Pet", new PetData());
             await GivenAPetWasUpdated(petdata);
@@ -441,7 +445,7 @@ namespace PetstoreAPITesting
         }
 
         [Test]
-        public async Task GivenAPetWasUpdated_WhenIGetAPet()
+        public async Task AUserGetsAPetThatWasUpdated()
         {
             PetTestData petdata = new PetTestData("Default pet", new PetData());
             await GivenAPetWasUpdated(petdata);
@@ -450,7 +454,7 @@ namespace PetstoreAPITesting
         }
 
         [Test]
-        public async Task GivenAnImageWasUploadedToAPet_WhenIGetAnExistingPet()
+        public async Task AUserGetsThePetAfterHavingUploadedAnImage()
         {
             var petdata = new PetTestData("Default Valid Pet", new PetData());
             await GivenAnImageWasUploadedToAPet();
@@ -459,11 +463,12 @@ namespace PetstoreAPITesting
         }
 
         [Test]
-        public async Task GivenAnImageWasUploadedToAPet_WhenIUploadAnotherPetImage()
+        public async Task AUserUploadsAnotherPetImageThePetAfterHavingUploadedAnImage()
         {
             PetTestData valid_case = new PetTestData("Pet exists", new PetData());
             await GivenAnImageWasUploadedToAPet();
             var response = await pets.uploadImage(valid_case.GetValue().GetID(), PetsEndpointTest.imageFolder + "/dog.jpg");
+            pets.ExpectASuccessMessage(response);
         }
 
         [OneTimeTearDown]
